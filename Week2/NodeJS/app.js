@@ -5,13 +5,19 @@ MongoClient.connect('mongodb://localhost:27017/course', function(err, db) {
 	
 	var query = { 'grade' : 100 };
 	
-	// find()
-	db.collection('grades').find(query).toArray(function(err, docs) {
-
+	// find() with cursor
+	var cursor = db.collection('grades').find(query);
+	
+	cursor.each(function(err, doc) {
+		
 		if (err) throw err;
 		
-		console.dir(docs);
-		db.close();
-	});
+		if (doc == null) {
+			return db.close();
+		}
+		
+		console.dir(doc.student + " got a good grade!");
+		
+	})
 	
 });
