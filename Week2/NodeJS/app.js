@@ -4,8 +4,9 @@ MongoClient.connect('mongodb://localhost:27017/course', function(err, db) {
 	if (err) throw err;
 	
 	var query = { 'grade' : 100 };
-	// findOne()
-	db.collection('grades').findOne(query, function(err, doc) {
+	
+	// find()
+	db.collection('grades').find(query).toArray(function(err, docs) {
 
 		if (err) throw err;
 		
