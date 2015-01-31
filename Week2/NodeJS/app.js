@@ -1,4 +1,4 @@
-// curl http://www.reddit.com/r/technology/.json > reddit.json
+// Using $regex for querying data
 
 var MongoClient = require('mongodb').MongoClient,
 request = require('request');
@@ -6,29 +6,19 @@ request = require('request');
 MongoClient.connect('mongodb://localhost:27017/course', function(err, db) {
 	
 	if (err) throw err;
-	
-	request('http://www.reddit.com/r/technology/.json', function(err, response, body) {
-		
-		if (!err && response.statusCode == 200) {
-			var obj = JSON.parse(body);
-			
-			var stories = obj.data.children.map(function(story) {
-				return story.data;
-			});
 
-			db.collection('reddit').insert(stories, function(err, data) {
-		
-				if (err) throw err;
-				console.dir(data);
-				db.close();
+	var query = {'title': {'$regex': 'Bay'}};
+	var projection = {'title': 1, '_id': 0};
 
-			});
-			
-			
+	db.collection('reddit').find(query, projection).each(function(err, doc) {
+
+		if (err) throw err;
+		
+		if (doc == null) {
+			db.close()
 		}
-		
-		
+		console.dir(doc);
+
 	});
-	
 	
 });
