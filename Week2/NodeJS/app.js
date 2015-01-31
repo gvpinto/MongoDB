@@ -1,21 +1,34 @@
-var MongoClient = require('mongodb').MongoClient;
+// curl http://www.reddit.com/r/technology/.json > reddit.json
+
+var MongoClient = require('mongodb').MongoClient,
+request = require('request');
 
 MongoClient.connect('mongodb://localhost:27017/course', function(err, db) {
 	
 	if (err) throw err;
 	
-	var query = {'student': 'Joe', 'grade': {'$gt' : 80, '$lt': 95}};
-	
-	db.collection('grades').find(query).each(function(err, doc) {
+	request('http://www.reddit.com/r/technology/.json', function(err, response, body) {
 		
-		if (err) throw err;
+		if (!err && response.statusCode == 200) {
+			var obj = JSON.parse(body);
+			
+			var stories = obj.data.children.map(function(story) {
+				return story.data;
+			});
+
+			db.collection('reddit').insert(stories, function(err, data) {
 		
-		if (doc == null) {
-			return db.close();			
+				if (err) throw err;
+				console.dir(data);
+				db.close();
+
+			});
+			
+			
 		}
 		
-		console.dir(doc)
-
+		
 	});
+	
 	
 });
