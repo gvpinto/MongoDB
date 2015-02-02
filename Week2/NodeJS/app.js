@@ -1,4 +1,4 @@
-// Inserting records. Eg. 2. Providing an _id value and trying to insert it twice
+// Inserting records. Eg. 3. Changing the code to handle the error
 
 var MongoClient = require('mongodb').MongoClient;
 
@@ -10,7 +10,10 @@ MongoClient.connect('mongodb://localhost:27017/course', function(err, db) {
 
 	db.collection('students').insert(student, function(err, inserted) {
 
-		if (err) throw err;
+		if (err) {
+			console.log(err.message);
+			return db.close();
+		};
 		
 		console.log('Record has been sucessfully inserted: ' + JSON.stringify(inserted));
 		return db.close();
