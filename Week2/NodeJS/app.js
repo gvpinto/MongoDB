@@ -1,4 +1,4 @@
-// Skip limit and Sort. Eg. 3
+// Skip limit and Sort. Eg. 4
 
 var MongoClient = require('mongodb').MongoClient,
 request = require('request');
@@ -15,10 +15,16 @@ MongoClient.connect('mongodb://localhost:27017/course', function(err, db) {
 	cursor.skip(1);
 	
 	// Sort Order in an Array does not change when it gets to the database
-	cursor.sort([['grade', 1], ['student', -1]]);
+	//cursor.sort([['grade', 1], ['student', -1]]);
 	
 	// Do not use Object as the sort attribute order can change
 	//cursor.sort({'grade': 1, 'student': -1});
+	var options = {
+		'limit': 4,
+		'skip': 1,
+		'sort': [['grade', 1], ['student', -1]]};
+		
+	var cursor = grades.find({}, {}, options);
 	
 	cursor.each(function(err, doc) {
 
